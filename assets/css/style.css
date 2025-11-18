@@ -1,0 +1,157 @@
+
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+:root {
+    --bs-primary: #6F0303;
+    --bs-primary-rgb: 111, 3, 3;
+    --bs-primary-dark: #580202;         
+    --bs-primary-bg-subtle: #f6d6d6;
+    --bs-primary-border-subtle: #e0a9a9;
+}
+
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: var(--bs-primary);
+    color: white;
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.btn-primary {
+    background-color: var(--bs-primary);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: var(--bs-primary-dark);
+    transform: translateY(-1px);
+}
+
+/* Sobrescribir colores de Bootstrap (variables ya definidas arriba) */
+/* Asegúrate de cargar este CSS después del CSS de Bootstrap */
+.navbar,
+.navbar.bg-primary,
+.navbar.navbar-dark,
+.bg-primary {
+    background-color: var(--bs-primary) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand,
+.nav-link,
+.navbar .nav-link,
+.navbar-dark .navbar-nav .nav-link,
+.bg-primary .nav-link,
+.bg-primary .navbar-brand {
+    color: white !important;
+}
+
+.nav-link:hover,
+.navbar-dark .nav-link:hover,
+.bg-primary .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    border-radius: 4px;
+}
+
+/* Botones (variables para compatibilidad con Bootstrap 5) */
+.btn-primary,
+.btn-outline-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--bs-primary);
+    --bs-btn-border-color: var(--bs-primary);
+    --bs-btn-hover-bg: var(--bs-primary-dark);
+    --bs-btn-hover-border-color: var(--bs-primary-dark);
+    --bs-btn-active-bg: var(--bs-primary-dark);
+    --bs-btn-active-border-color: var(--bs-primary-dark);
+}
+
+/* Dropdowns */
+.dropdown-item.active,
+.dropdown-item:active {
+    background-color: var(--bs-primary);
+    color: #fff;
+}
+
+/* Badges */
+.badge.bg-primary {
+    background-color: var(--bs-primary) !important;
+    color: #fff;
+}
+
+/* Paginación */
+.page-item.active .page-link {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+.page-link {
+    color: var(--bs-primary);
+}
+
+.page-link:hover {
+    color: var(--bs-primary-dark);
+}
+
+/* Estilos para los formularios */
+.form-control:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.12);
+}
+
+/* Estilos para las tablas */
+.table {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+/* Estilos para los mensajes de alerta */
+.alert {
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+/* Estilos para el dashboard */
+.dashboard-card {
+    border-left: 4px solid var(--bs-primary);
+    transition: transform 0.3s;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Estilos para el footer */
+.footer {
+    background-color: #f8f9fa;
+    padding: 1.5rem 0;
+    margin-top: 2rem;
+    text-align: center;
+    color: #6c757d;
+}
+
+/* Clase utilitaria por si la quieres aplicar en elementos puntuales */
+.primary-color {
+    color: var(--bs-primary) !important;
+}
+.primary-bg {
+    background-color: var(--bs-primary) !important;
+    color: #fff !important;
+}
