@@ -1,0 +1,129 @@
+-- Crear la base de datos si no existe
+CREATE DATABASE IF NOT EXISTS sistema_tickets_itca 
+DEFAULT CHARACTER SET utf8mb4 
+COLLATE utf8mb4_unicode_ci;
+
+USE sistema_tickets_itca;
+
+-- Tabla de roles
+CREATE TABLE IF NOT EXISTS roles (
+    id_rol INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_rol VARCHAR(50) NOT NULL UNIQUE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de usuarios
+CREATE TABLE IF NOT EXISTS usuarios (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    contrasena VARCHAR(255) NOT NULL,
+    id_rol INT NOT NULL,
+    activo BOOLEAN DEFAULT TRUE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_rol) REFERENCES roles(id_rol) ON DELETE RESTRICT ON UPDATE CASCADE,
+    INDEX idx_email (email)
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de categorías de tickets
+CREATE TABLE IF NOT EXISTS categorias (
+    id_categoria INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_categoria VARCHAR(100) NOT NULL UNIQUE,
+    descripcion TEXT,
+    activa BOOLEAN DEFAULT TRUE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de tickets
+CREATE TABLE IF NOT EXISTS tickets (
+    id_ticket INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(200) NOT NULL,
+    descripcion TEXT NOT NULL,
+    id_usuario INT NOT NULL,
+    id_categoria INT NOT NULL,
+    estado ENUM('Abierto', 'En Proceso', 'En Espera', 'Resuelto', 'Cerrado') DEFAULT 'Abierto',
+    prioridad ENUM('Baja', 'Media', 'Alta') DEFAULT 'Media',
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (id_categoria) REFERENCES categorias(id_categoria) ON DELETE RESTRICT ON UPDATE CASCADE,
+    INDEX idx_estado (estado),
+    INDEX idx_prioridad (prioridad)
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de respuestas de tickets
+CREATE TABLE IF NOT EXISTS respuestas (
+    id_respuesta INT AUTO_INCREMENT PRIMARY KEY,
+    id_ticket INT NOT NULL,
+    id_usuario INT NOT NULL,
+    mensaje TEXT NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_ticket) REFERENCES tickets(id_ticket) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Insertar roles por defecto
+INSERT IGNORE INTO roles (id_rol, nombre_rol) VALUES 
+(1, 'Administrador'),
+(2, 'Usuario');
+
+-- Insertar un usuario administrador por defecto (contraseña: contrasena)
+INSERT IGNORE INTO usuarios (id_usuario, nombre, email, contrasena, id_rol) VALUES 
+(1, 'Administrador', 'admin@itca.edu.sv', 'contrasena', 1);
+
+-- Insertar un usuario normal de ejemplo (contraseña: usuario123)
+INSERT IGNORE INTO usuarios (id_usuario, nombre, email, contrasena, id_rol) VALUES 
+(2, 'Usuario de Prueba', 'usuario@itca.edu.sv', 'usuario123', 2);
+
+-- Insertar un usuario normal de ejemplo (contraseña: usuario123)
+INSERT IGNORE INTO usuarios (id_usuario, nombre, email, contrasena, id_rol) VALUES 
+(3, 'Edwar', 'edwar@itca.edu.sv', 'edwar123', 3);
+
+-- Insertar categorías de ejemplo
+INSERT IGNORE INTO categorias (id_categoria, nombre_categoria, descripcion) VALUES 
+(1, 'Hardware', 'Problemas con equipos de cómputo, impresoras, periféricos, etc.'),
+(2, 'Software', 'Problemas con programas, sistemas operativos, aplicaciones, etc.'),
+(3, 'Redes', 'Problemas de conectividad, internet, intranet, etc.'),
+(4, 'Correo Electrónico', 'Problemas con cuentas de correo electrónico'),
+(5, 'Sistemas', 'Problemas con sistemas institucionales'),
+(6, 'Otros', 'Otras solicitudes o problemas no clasificados');
+
+CREATE TABLE IF NOT EXISTS archivos_tickets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_ticket INT NOT NULL,
+    nombre_archivo VARCHAR(255) NOT NULL,
+    ruta_archivo VARCHAR(255) NOT NULL,
+    fecha_subida TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_ticket) REFERENCES tickets(id_ticket) ON DELETE CASCADE
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4;
+
+-- Tabla principal de solicitudes de software
+CREATE TABLE IF NOT EXISTS solicitudes_software (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    nombre_software VARCHAR(255) NOT NULL,
+    descripcion TEXT NOT NULL,
+    ciclo_educativo VARCHAR(100) NOT NULL,
+    estado ENUM('pendiente', 'en_proceso', 'completado', 'cancelado') DEFAULT 'pendiente',
+    link_descarga TEXT NULL,
+    observaciones_admin TEXT NULL,
+    fecha_solicitud TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);
+
+-- Tabla para archivos adjuntos (futuro uso)
+CREATE TABLE IF NOT EXISTS archivos_solicitud (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_solicitud INT NOT NULL,
+    nombre_archivo VARCHAR(255) NOT NULL,
+    ruta_archivo VARCHAR(500) NOT NULL,
+    tipo_archivo VARCHAR(50) NOT NULL,
+    tamano_archivo INT NOT NULL,
+    fecha_subida TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_solicitud) REFERENCES solicitudes_software(id) ON DELETE CASCADE
+);
